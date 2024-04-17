@@ -87,17 +87,7 @@ def main():
     mean, std = get_imagenet_mean_std()
     
     if config.DATASET.DATASET == 'UWS':
-        # transform.ResizeTest((config.TRAIN.TRAIN_H, config.TRAIN.TRAIN_W)),
-        # transform.ResizeShort(config.TRAIN.SHORT_SIZE),
-        # transform.RandScale([config.TRAIN.SCALE_MIN, config.TRAIN.SCALE_MAX]),
-        # transform.RandRotate(
-        #     [config.TRAIN.ROTATE_MIN, config.TRAIN.ROTATE_MAX],
-        #     padding=mean,
-        #     ignore_label=config.TRAIN.IGNORE_LABEL,
-        # ),
-        # transform.RandomGaussianBlur(),
-        # transform.RandomHorizontalFlip(),
-
+    
         train_transform_list = [
             transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
             transform.RandScale([0.5, 1.0]),
@@ -294,6 +284,8 @@ def main():
             channel_values=None
         )
     elif config.DATASET.DATASET == 'UWS3':
+        #import pdb
+        #pdb.set_trace()
         train_transform_list = [
             transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
             transform.Crop(
