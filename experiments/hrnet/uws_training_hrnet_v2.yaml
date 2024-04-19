@@ -13,7 +13,7 @@ DATASET:
   ROOT: '/content/segbuilder_sem_seg/datasets/uw_sem_seg_dataset/'
   TEST_SET: 'validation'
   TRAIN_SET: 'train'
-  NUM_CLASSES: 29
+  NUM_CLASSES: 51
 MODEL:
   NAME: seg_hrnet
   NUM_OUTPUTS: 1
