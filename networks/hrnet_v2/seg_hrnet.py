@@ -314,8 +314,11 @@ class HighResolutionNet(nn.Module):
             self.stage4_cfg, num_channels, multi_scale_output=True)
 
         # Reza (04/17/24): np.int() complains
+        # Jake Elafros (04/19/24): replaced np.int() with int()
+        #        because the error code said np.int() was
+        #        deprecated and int() would function the same
         print(f"np.sum(pre_stage_channels): {pre_stage_channels}")
-        last_inp_channels = np.int(np.sum(pre_stage_channels))
+        last_inp_channels = int(np.sum(pre_stage_channels))
 
         self.last_layer = nn.Sequential(
             nn.Conv2d(
