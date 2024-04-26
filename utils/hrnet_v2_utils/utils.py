@@ -110,7 +110,11 @@ def get_confusion_matrix(label, pred, size, num_class, ignore=-1):
     output = pred.cpu().numpy().transpose(0, 2, 3, 1)
     seg_pred = np.asarray(np.argmax(output, axis=3), dtype=np.uint8)
     seg_gt = np.asarray(
-    label.cpu().numpy()[:, :size[-2], :size[-1]], dtype=np.int)
+    # Jake Elafros 04/26/2024: changed "dtype=np.int" to "dtype=int"
+    #   because an error code said that np.int was deprecated, and
+    #   int should be used instead, and that it should perform the
+    #   same.
+    label.cpu().numpy()[:, :size[-2], :size[-1]], dtype=int)
 
     ignore_index = seg_gt != ignore
     seg_gt = seg_gt[ignore_index]
