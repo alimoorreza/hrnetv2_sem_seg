@@ -31,3 +31,7 @@ Final_data02_2024
 
 
 
+
+
+train_hrnet_v2_final.py 
+dataparallel

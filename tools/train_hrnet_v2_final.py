@@ -429,7 +429,7 @@ def main():
             images=images_train,
             masks=masks_train,
             normalizer=transform.Compose(train_transform_list),
-            channel_values=None
+            channel_valudes=None
         )
         val_dataset = UWFSDataLoader2(
             output_image_height=config.TRAIN.IMAGE_SIZE[0],
