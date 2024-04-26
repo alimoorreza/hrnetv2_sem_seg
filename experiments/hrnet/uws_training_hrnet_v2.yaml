@@ -5,7 +5,7 @@ CUDNN:
 GPUS: (0,)
 LOG_DIR: '/content/segbuilder_sem_seg/log'
 OUTPUT_DIR: '/content/segbuilder_sem_seg/output'
-WORKERS: 2
+WORKERS: 1
 PRINT_FREQ: 100
 
 DATASET:
