@@ -2,7 +2,7 @@ CUDNN:
   BENCHMARK: true
   DETERMINISTIC: false
   ENABLED: true
-GPUS: (0,1)
+GPUS: (0,)
 LOG_DIR: '/content/segbuilder_sem_seg/log'
 OUTPUT_DIR: '/content/segbuilder_sem_seg/output'
 WORKERS: 2
@@ -77,7 +77,8 @@ TRAIN:
   - 256
   - 256
   BASE_SIZE: 256
-  BATCH_SIZE_PER_GPU: 32
+  #32
+  BATCH_SIZE_PER_GPU: 256
   SHUFFLE: true
   BEGIN_EPOCH: 0
   END_EPOCH: 100
