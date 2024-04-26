@@ -10,7 +10,7 @@ PRINT_FREQ: 100
 
 DATASET:
   DATASET: UWS3
-  ROOT: '/content/segbuilder_sem_seg/datasets/uw_sem_seg_dataset/'
+  ROOT: '/content/segbuilder_sem_seg/dataset/uw_sem_seg_dataset/'
   TEST_SET: 'validation'
   TRAIN_SET: 'train'
   NUM_CLASSES: 51
