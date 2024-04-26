@@ -425,6 +425,7 @@ def main():
         
         train_dataset = UWFSDataLoader2(
             output_image_height=config.TRAIN.IMAGE_SIZE[0],
+            #error 1
             images=images_train,
             masks=masks_train,
             normalizer=transform.Compose(train_transform_list),
