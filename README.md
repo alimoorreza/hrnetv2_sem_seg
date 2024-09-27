@@ -1,5 +1,6 @@
 # semantic segmentation experiments using the annotation samples from Underwater Segmentation v2 Dataset
 - HRNetv2
+##**other candidates we could try**
 - FCN
 - PSPNet
 
@@ -7,7 +8,7 @@
 
 
 
-## Apr 19 note:
+<!--## Apr 19 note:
 Cleaned up File structure in Drive, changes as follow:
 
 Final_data02_2024
@@ -27,7 +28,7 @@ Final_data02_2024
 [x] upload trainTestSplit
 [] Axoloto new Mask Generate
 [] update yaml file
-[] run ipynb file
+[] run ipynb file-->
 
 
 
