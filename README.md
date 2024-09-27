@@ -1,6 +1,8 @@
-# semantic segmentation experiments using the annotation samples from Underwater Segmentation v2 Dataset
+# Semantic segmentation experiments using the annotated samples from Underwater Segmentation v2 Dataset
 - HRNetv2
-##**other candidates we could try**
+
+
+##**Other models we could try**
 - FCN
 - PSPNet
 
