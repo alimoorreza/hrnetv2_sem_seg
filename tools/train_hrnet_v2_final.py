@@ -322,10 +322,10 @@ def main():
                 '*.jpg'
             )
         )
-        import pdb
-        pdb.set_trace()
+        #import pdb
+        #pdb.set_trace()
         masks_files = \
-            [os.path.join(config.DATASET.ROOT, train_dir, 'labels', os.path.basename(m_i)) for m_i in images_files]
+            [os.path.join(config.DATASET.ROOT, train_dir, 'labels', os.path.basename(m_i[:-4]+'.png')) for m_i in images_files]
 
         images = []
         masks = []
