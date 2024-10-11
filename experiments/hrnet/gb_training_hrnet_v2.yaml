@@ -10,7 +10,7 @@ PRINT_FREQ: 100
 
 DATASET:
   DATASET: UWS3
-  ROOT: '/content/hrnetv2_sem_seg/dataset/gb_ss_v0/'
+  ROOT: '/content/hrnetv2_sem_seg/dataset/gb_training_data/'
   TEST_SET: 'validation'
   TRAIN_SET: 'train'
   NUM_CLASSES: 5
