@@ -284,8 +284,8 @@ def main():
             channel_values=None
         )
     elif config.DATASET.DATASET == 'UWS3':
-        import pdb
-        pdb.set_trace()
+        #import pdb
+        #pdb.set_trace()
         train_transform_list = [
             transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
             transform.Crop(
@@ -319,7 +319,7 @@ def main():
                 config.DATASET.ROOT,
                 train_dir,
                 'images',
-                '*.png'
+                '*.jpg'
             )
         )
         masks_files = \
