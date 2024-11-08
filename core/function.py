@@ -38,20 +38,29 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
     # Training
     model.train()
 
-    batch_time = AverageMeter()
-    ave_loss = AverageMeter()
-    tic = time.time()
-    cur_iters = epoch*epoch_iters
-    writer = writer_dict['writer']
-    global_steps = writer_dict['train_global_steps']
-
+    batch_time      = AverageMeter()
+    ave_loss        = AverageMeter()
+    tic             = time.time()
+    cur_iters       = epoch*epoch_iters
+    writer          = writer_dict['writer']
+    global_steps    = writer_dict['train_global_steps']
+    
+    '''# ---------- debug (Reza: 10/25/24)---------
+    #a = iter(trainloader)
+    enumerated_items = enumerate(trainloader, 0)
+    index, batch = next(enumerated_items)
+    import pdb
+    pdb.set_trace()        
+    # ----------                      ---------'''
+    
+    
     for i_iter, batch in enumerate(trainloader, 0):
-        images, labels = batch
-        images = images.cuda()
-        labels = labels.long().cuda()
+        images, labels  = batch                
+        images          = images.cuda()
+        labels          = labels.long().cuda()
 
-        losses, _ = model(images, labels)
-        loss = losses.mean()
+        losses, _       = model(images, labels)
+        loss            = losses.mean()
 
         if dist.is_distributed():
             reduced_loss = reduce_tensor(loss)
@@ -85,19 +94,29 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
     writer_dict['train_global_steps'] = global_steps + 1
 
 def validate(config, testloader, model, writer_dict):
+    
     model.eval()
-    ave_loss = AverageMeter()
-    nums = config.MODEL.NUM_OUTPUTS
-    confusion_matrix = np.zeros(
-        (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES, nums))
+    ave_loss            = AverageMeter()
+    nums                = config.MODEL.NUM_OUTPUTS
+    confusion_matrix    = np.zeros( (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES, nums))
+    
     with torch.no_grad():
-        for idx, batch in enumerate(testloader):
-            image, label = batch
-            size = label.size()
-            image = image.cuda()
-            label = label.long().cuda()
+        # ---------- debug (Reza: 10/25/24)---------
+        #a = iter(trainloader)
+        enumerated_items = enumerate(testloader, 0)
+        index, batch = next(enumerated_items)
+        #import pdb
+        #pdb.set_trace()        
+        # ----------                      ---------
+        
+        for idx, batch in enumerate(testloader, 0):
+            image, label    = batch
+            size            = label.size()
+            image           = image.cuda()
+            label           = label.long().cuda()
 
-            losses, pred = model(image, label)
+            losses, pred    = model(image, label)
+            
             if not isinstance(pred, (list, tuple)):
                 pred = [pred]
             for i, x in enumerate(pred):
