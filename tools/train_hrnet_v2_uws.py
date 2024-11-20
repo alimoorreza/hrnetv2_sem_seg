@@ -22,8 +22,9 @@ from core.criterion import CrossEntropy, OhemCrossEntropy
 from core.function import train, validate
 from utils.hrnet_v2_utils.utils import create_logger, FullModel
 from utils.hrnet_utils.normalization_utils import get_imagenet_mean_std
-from semantic_dataloader import UWFSDataLoader
-from semantic_dataloader_final import UWFSDataLoader as UWFSDataLoader2
+
+from uws_dataloader import UWFSDataLoader
+
 from utils.hrnet_utils import transform
 from tqdm import tqdm
 from scipy.io import loadmat
@@ -86,214 +87,7 @@ def main():
     # prepare data
     mean, std = get_imagenet_mean_std()
     
-    if config.DATASET.DATASET == 'UWS':
-        # transform.ResizeTest((config.TRAIN.TRAIN_H, config.TRAIN.TRAIN_W)),
-        # transform.ResizeShort(config.TRAIN.SHORT_SIZE),
-        # transform.RandScale([config.TRAIN.SCALE_MIN, config.TRAIN.SCALE_MAX]),
-        # transform.RandRotate(
-        #     [config.TRAIN.ROTATE_MIN, config.TRAIN.ROTATE_MAX],
-        #     padding=mean,
-        #     ignore_label=config.TRAIN.IGNORE_LABEL,
-        # ),
-        # transform.RandomGaussianBlur(),
-        # transform.RandomHorizontalFlip(),
-
-        train_transform_list = [
-            transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
-            transform.RandScale([0.5, 1.0]),
-            transform.RandRotate(
-                [-10, 10],
-                padding=mean,
-                ignore_label=config.TRAIN.IGNORE_LABEL,
-            ),
-            transform.RandomHorizontalFlip(),
-            transform.Crop(
-                [config.TRAIN.IMAGE_SIZE[0], config.TRAIN.IMAGE_SIZE[1]],
-                crop_type="rand",
-                padding=mean,
-                ignore_label=config.TRAIN.IGNORE_LABEL,
-            ),
-            transform.ToTensor(),
-            transform.Normalize(mean=mean, std=std),
-        ]
-        # transform.ResizeTest((config.TRAIN.IMAGE_SIZE[0], config.TRAIN.IMAGE_SIZE[1])),
-        # transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
-        val_transform_list = [
-            transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
-            transform.Crop(
-                [config.TRAIN.IMAGE_SIZE[0], config.TRAIN.IMAGE_SIZE[1]],
-                crop_type="center",
-                padding=mean,
-                ignore_label=config.TRAIN.IGNORE_LABEL,
-            ),
-            transform.ToTensor(),
-            transform.Normalize(mean=mean, std=std),
-        ]
-        train_indices_file = config.DATASET.TRAIN_SET
-        val_indices_file = config.DATASET.TEST_SET
-
-        with open(train_indices_file, 'r') as f:
-            train_indices = f.read().strip().split('\n')
-
-        with open(val_indices_file, 'r') as f:
-            val_indices = f.read().strip().split('\n')
-
-        train_dataset = UWFSDataLoader(
-            output_image_height=config.TRAIN.IMAGE_SIZE[0],
-            dataset_root=config.DATASET.ROOT,
-            image_format='mat',
-            indices=train_indices,
-            channel_values=None,
-            normalizer=transform.Compose(train_transform_list)
-        )
-        val_dataset = UWFSDataLoader(
-            output_image_height=config.TRAIN.IMAGE_SIZE[0],
-            dataset_root=config.DATASET.ROOT,
-            image_format='mat',
-            indices=val_indices,
-            channel_values=None,
-            normalizer=transform.Compose(val_transform_list)
-        )
-    elif config.DATASET.DATASET == 'UWS2':
-        train_transform_list = [
-            transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
-            transform.Crop(
-                [config.TRAIN.IMAGE_SIZE[0], config.TRAIN.IMAGE_SIZE[1]],
-                crop_type="rand",
-                padding=mean,
-                ignore_label=config.TRAIN.IGNORE_LABEL,
-            ),
-            transform.ToTensor(),
-            transform.Normalize(mean=mean, std=std),
-        ]
-        # transform.ResizeTest((config.TRAIN.TRAIN_H, config.TRAIN.TRAIN_W)),
-        # transform.ResizeShort(config.TRAIN.SHORT_SIZE),
-        val_transform_list = [
-            transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
-            transform.Crop(
-                [config.TRAIN.IMAGE_SIZE[0], config.TRAIN.IMAGE_SIZE[1]],
-                crop_type="center",
-                padding=mean,
-                ignore_label=config.TRAIN.IGNORE_LABEL,
-            ),
-            transform.ToTensor(),
-            transform.Normalize(mean=mean, std=std),
-        ]
-        images = []
-        masks = []
-        im_classes = []
-        classes_fol = os.listdir(config.DATASET.ROOT)
-        if '.DS_Store' in classes_fol:
-            classes_fol.remove('.DS_Store')
-        for cls_fol in tqdm(classes_fol):
-            files = os.listdir(os.path.join(config.DATASET.ROOT, cls_fol))
-            for fl in files:
-                if not fl.endswith('.mat'):
-                    continue
-                mat = loadmat(os.path.join(config.DATASET.ROOT, cls_fol, fl))
-                images.append(np.asarray(mat["image_array"]))
-                im_classes.append(mat["class"])
-                masks.append(np.asarray(mat["mask_array"]))
-
-        dataset_len = len(images)
-        logger.info(f'Total mat files: {dataset_len}')
-        np.random.seed(0)
-        rand_n = list(np.random.randint(low=0, high=dataset_len, size=200))
-        for i in rand_n:
-            im = images[i]
-            target = masks[i]
-            class_ = im_classes[i]
-            im_classes.append(class_)
-            # perform horizontal flip
-            images.append(np.fliplr(im))
-            masks.append(np.fliplr(target))
-
-        # shift right
-        rand_n = list(np.random.randint(low=0, high=dataset_len, size=100))
-        for i in rand_n:
-            shift = 20
-            im = images[i]
-            target = masks[i]
-            class_ = im_classes[i]
-            im_classes.append(class_)
-
-            im[:, shift:] = im[:, :-shift]
-            target[:, shift:] = target[:, :-shift]
-            images.append(im)
-            masks.append(target)
-
-        # shift left
-        rand_n = list(np.random.randint(low=0, high=dataset_len, size=100))
-        for i in rand_n:
-            shift = 20
-            im = images[i]
-            target = masks[i]
-            class_ = im_classes[i]
-            im_classes.append(class_)
-
-            im[:, :-shift] = im[:, shift:]
-            target[:, :-shift] = target[:, shift:]
-            images.append(im)
-            masks.append(target)
-
-        # shift up
-        rand_n = list(np.random.randint(low=0, high=dataset_len, size=100))
-        for i in rand_n:
-            shift = 20
-            im = images[i]
-            target = masks[i]
-            class_ = im_classes[i]
-            im_classes.append(class_)
-
-            im[:-shift, :] = im[shift:, :]
-            target[:-shift, :] = target[shift:, :]
-            images.append(im)
-            masks.append(target)
-
-        # shift down
-        rand_n = list(np.random.randint(low=0, high=dataset_len, size=100))
-        for i in rand_n:
-            shift = 20
-            im = images[i]
-            target = masks[i]
-            class_ = im_classes[i]
-            im_classes.append(class_)
-
-            im[shift:, :] = im[:-shift, :]
-            target[shift:, :] = target[:-shift, :]
-            images.append(im)
-            masks.append(target)
-
-        split = StratifiedShuffleSplit(n_splits=1, test_size=0.1)
-        images_train = []
-        # classes_train = []
-        masks_train = []
-        images_test = []
-        # classes_test = []
-        masks_test = []
-        for train_index, test_index in split.split(images, im_classes):
-            images_train = [images[i] for i in train_index]
-            # classes_train = [im_classes[i] for i in train_index]
-            masks_train = [masks[i] for i in train_index]
-            images_test = [images[i] for i in test_index]
-            # classes_test = [im_classes[i] for i in test_index]
-            masks_test = [masks[i] for i in test_index]
-
-        train_dataset = UWFSDataLoader2(
-            output_image_height=config.TRAIN.IMAGE_SIZE[0],
-            images=images_train,
-            masks=masks_train,
-            normalizer=transform.Compose(train_transform_list),
-            channel_values=None
-        )
-        val_dataset = UWFSDataLoader2(
-            output_image_height=config.TRAIN.IMAGE_SIZE[0],
-            images=images_test,
-            masks=masks_test,
-            normalizer=transform.Compose(val_transform_list),
-            channel_values=None
-        )
-    elif config.DATASET.DATASET == 'UWS3':
+    if config.DATASET.DATASET == 'UWS3':
         train_transform_list = [
             transform.ResizeShort(config.TRAIN.IMAGE_SIZE[0]),
             transform.Crop(
@@ -431,14 +225,14 @@ def main():
         dataset_len = len(images_test)
         logger.info(f'Total val mat files: {dataset_len}')
         
-        train_dataset = UWFSDataLoader2(
+        train_dataset = UWFSDataLoader(
             output_image_height=config.TRAIN.IMAGE_SIZE[0],
             images=images_train,
             masks=masks_train,
             normalizer=transform.Compose(train_transform_list),
             channel_values=None
         )
-        val_dataset = UWFSDataLoader2(
+        val_dataset = UWFSDataLoader(
             output_image_height=config.TRAIN.IMAGE_SIZE[0],
             images=images_test,
             masks=masks_test,

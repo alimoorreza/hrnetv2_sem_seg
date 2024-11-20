@@ -3,11 +3,23 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import numpy as np
 from imageio import imread
-import PIL.Image
+from PIL import Image
 import cv2
 import os
 from scipy.io import loadmat
 from tqdm import tqdm
+from torch.nn import functional as F
+import os
+
+import cv2
+import numpy as np
+import random
+
+import torch
+from torch.nn import functional as F
+from torch.utils import data
+
+from config import config_hrnet_v2 as config
 
 
 class UWFSDataLoader(torch.utils.data.Dataset):
@@ -73,29 +85,17 @@ class UWFSDataLoader(torch.utils.data.Dataset):
     def get_image_nd_label(self, index):
         image = self.images[index]
         label = self.masks[index]
-        # print(np.unique(label))
-        img_h, img_w = image.shape[0], image.shape[1]
-        ratio = img_w / img_h
-        out_width = int(ratio * self.output_image_height)
-        # output_size= (self.output_image_height, out_width)
-        output_size = (self.output_image_height, self.output_image_height)
-        if (image.shape[0], image.shape[1]) != output_size:
-            image = cv2.resize(image, output_size, 0, 0, interpolation=cv2.INTER_LINEAR)
-        if (label.shape[0], label.shape[1]) != output_size:
-            label = cv2.resize(label, output_size, 0, 0, interpolation=cv2.INTER_NEAREST)
-        # print(image.shape, label.shape)
-        # print(np.unique(label))
         return image, label
 
     def __getitem__(self, index):
-        img, label_image = self.get_image_nd_label(index)
+        img, label_image_gray = self.get_image_nd_label(index)
 
-        if self.normalizer:
-            image, label_image_gray = self.normalizer(img, label_image)
+        if self.normalizer:            
+            image, label_image_gray = self.normalizer(img, label_image_gray)
         else:
             raise NotImplementedError("Normalizer not implemented...")
 
-        return image, label_image_gray, img, label_image
+        return image, label_image_gray
 
     def __len__(self):
         return len(self.images)
