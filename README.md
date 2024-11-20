@@ -1,4 +1,4 @@
-# Semantic segmentation experiments using the annotated samples from Underwater Segmentation v2 Dataset
+# Semantic segmentation experiments using the annotated samples from an arbitrary Dataset
 - HRNetv2
 
 
