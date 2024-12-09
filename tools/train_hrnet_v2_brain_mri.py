@@ -121,6 +121,9 @@ def main():
         train_dir = config.DATASET.TRAIN_SET
         val_dir = config.DATASET.TEST_SET
         
+        # import pdb
+        # pdb.set_trace()
+
         images_files = glob.glob(
             os.path.join(
                 config.DATASET.ROOT,
@@ -134,11 +137,12 @@ def main():
                 config.DATASET.ROOT, 
                 train_dir, 
                 'masks', 
-                os.path.basename(m_i)) for m_i in images_files]
+                os.path.basename(m_i[:-4] + '_mask.tif')) 
+                for m_i in images_files]
 
         images = []
         masks = []
-
+        
         for i_i_fl, img_fl in enumerate(tqdm(images_files)):
             images.append(np.array(
                 Image.open(img_fl)
@@ -226,7 +230,8 @@ def main():
                 config.DATASET.ROOT, 
                 val_dir, 
                 'masks', 
-                os.path.basename(m_i)) for m_i in images_files]
+                os.path.basename(m_i[:-4] + '_mask.tif')) 
+                for m_i in images_files]
 
         images_test = []
         masks_test = []

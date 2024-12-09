@@ -35,10 +35,7 @@ class BMDataLoader(torch.utils.data.Dataset):
             self.label_dictionary = {
                 0:  {'name': 'background',      'train_id': 0,   'color': (10, 206, 0)},
                 1:  {'name': 'foreground',      'train_id': 1,   'color': (3, 0, 177)}
-
-                '''2:  {'name': 'inner_wall',      'train_id': 2,   'color': (0, 0, 0)},
-                3:  {'name': 'outer_wall',      'train_id': 3,   'color': (177,0,0)}'''
-            }
+                }
         else:
             self.label_dictionary = self.channel_values
 
