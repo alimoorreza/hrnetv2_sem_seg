@@ -120,10 +120,7 @@ def main():
 
         train_dir = config.DATASET.TRAIN_SET
         val_dir = config.DATASET.TEST_SET
-        
-        # import pdb
-        # pdb.set_trace()
-
+        '''
         images_files = glob.glob(
             os.path.join(
                 config.DATASET.ROOT,
@@ -140,6 +137,24 @@ def main():
                 os.path.basename(m_i[:-4] + '_mask.tif')) 
                 for m_i in images_files]
 
+        '''
+
+        images_files = glob.glob(
+            os.path.join(
+                config.DATASET.ROOT,
+                train_dir,
+                'images',
+                '*.png'
+            )
+        )
+        masks_files = \
+            [os.path.join(
+                config.DATASET.ROOT, 
+                train_dir, 
+                'masks', 
+                os.path.basename(m_i[:-4] + '.png')) 
+                for m_i in images_files]
+        
         images = []
         masks = []
         
@@ -217,6 +232,7 @@ def main():
         # ------------------------------------------------------------------------
         # Reza (12/09/24): loading the VALIDATION split: 'images' and 'masks'
         # ------------------------------------------------------------------------
+        '''
         images_files = glob.glob(
             os.path.join(
                 config.DATASET.ROOT,
@@ -232,6 +248,24 @@ def main():
                 'masks', 
                 os.path.basename(m_i[:-4] + '_mask.tif')) 
                 for m_i in images_files]
+
+        '''
+        images_files = glob.glob(
+            os.path.join(
+                config.DATASET.ROOT,
+                val_dir,
+                'images',
+                '*.png'
+            )
+        )
+        masks_files = \
+            [os.path.join(
+                config.DATASET.ROOT, 
+                val_dir, 
+                'masks', 
+                os.path.basename(m_i[:-4] + '.png')) 
+                for m_i in images_files]
+        
 
         images_test = []
         masks_test = []
